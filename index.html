@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <title>Charts using Socket.io and Highcharts</title>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var options =  {
+            chart: {
+                type: 'pie',
+                renderTo: 'container'
+            },
+            title: {
+                text: 'World Population'
+            },
+            plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        }
+                    }
+                },            
+                series: [{
+                name: 'billion',
+                data: [
+                { name: 'Asia', y: 0 },
+                { name: 'Africa', y: 0 },
+                { name: 'America', y: 0 },
+                { name: 'Australia', y: 0 }
+            ]
+            }]
+        };
+
+        var socket = io.connect('/');
+        socket.on('population', function (data) {
+            options.series[0].data = data.population;
+            var chart1 = new Highcharts.Chart(options);
+        });
+    </script>
+</head>
+
+<body>
+    <div id="container" style="width:100%; height:400px; text-align: center;">Loading...</div>
+</body>
+
+</html>
